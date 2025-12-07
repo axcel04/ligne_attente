@@ -146,7 +146,9 @@ export default function AgentDashboard() {
       {isMobile && sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={() => setSidebarOpen(false)}
+          onClick={() => {
+            setSidebarOpen(false)
+          }}
         />
       )}
 
@@ -181,8 +183,10 @@ export default function AgentDashboard() {
 
         <div className="mt-auto pt-6 border-t">
           <button
-          onClick={() => setAgentMode(true)}
-            // onClick={() => navigate("/archiveAgent")}
+          onClick={() => {
+            setAgentMode(true)
+            setSidebarOpen(false)
+          }}
             className="w-full text-left p-3 rounded-lg font-medium hover:bg-gray-100 mb-2"
           >
             Archive
