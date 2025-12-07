@@ -50,20 +50,7 @@ export default function ArchiveAgent() {
 
 
       {/* Main Content */}
-      <main className="ml-64 flex-1 p-6">
-        {/* Header général fixe */}
-        <header className="fixed top-0 left-64 right-0 h-16 bg-white shadow flex items-center justify-between px-6 z-50">
-          <div className="flex items-center gap-4">
-            <img src="/logo-hopt.png" alt="Logo" className="h-10 w-10" />
-            <h1 className="text-xl font-bold text-gray-800">Archive Agent</h1>
-          </div>
-          <button
-            onClick={()=>navigate("/agentDashboard")}
-            className="flex items-center gap-2 text-red-600 hover:text-red-700 font-semibold"
-          >
-            <LogOut className="h-5 w-5" /> AgentDashboard
-          </button>
-        </header>
+      <main className=" flex-1 p-6">
 
         <div className="mt-20">
           {/* Service Header avec stats et recherche */}
@@ -71,7 +58,7 @@ export default function ArchiveAgent() {
             <div className="flex items-center gap-2">
               <Users className="h-6 w-6 text-blue-600" />
               <div>
-                <h2 className="text-xl font-bold text-gray-800">{activeService}</h2>
+                <h2 className="text-xl font-bold text-gray-800">Archive</h2>
                 <p className="text-gray-500">{patients.length} patients archivés</p>
               </div>
             </div>

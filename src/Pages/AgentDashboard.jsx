@@ -185,7 +185,7 @@ export default function AgentDashboard() {
             // onClick={() => navigate("/archiveAgent")}
             className="w-full text-left p-3 rounded-lg font-medium hover:bg-gray-100 mb-2"
           >
-            📁 Archive
+            Archive
           </button>
           <button
             onClick={handleLogout}
