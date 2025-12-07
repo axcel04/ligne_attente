@@ -4,6 +4,8 @@ import axios from "axios";
 import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu,} from "lucide-react";
 
 const API_URL = "http://localhost:4000/api";
+const DIR_URL = "http://localhost:4000"
+
 
 export default function AdminDashboard() {
  const [activeSection, setActiveSection] = useState("Services");
@@ -13,21 +15,14 @@ export default function AdminDashboard() {
  const [editData, setEditData] = useState(null);
 
  // load from localStorage if present, otherwise default
- const [services, setServices] = useState(() => {
-  try {
-   const raw = localStorage.getItem("services");
-   return raw ? JSON.parse(raw) : [
-    { id: 1, name: "Radiologie", description: "Service d'imagerie médicale", image: null },
-    { id: 2, name: "Laboratoire", description: "Analyses médicales", image: null },
-   ];
-  } catch {
-   return [
-    { id: 1, name: "Radiologie", description: "Service d'imagerie médicale", image: null },
-    { id: 2, name: "Laboratoire", description: "Analyses médicales", image: null },
-   ];
-  }
- });
-
+ const [services, setServices] = useState([]);
+ useEffect(()=> {
+  axios.get(`${API_URL}/service`)
+    .then(resp => {
+      setServices(resp.data)
+    })
+    .catch(err => console.log(err.message))
+ },[])
  const [agents, setAgents] = useState(() => {
   try {
    const raw = localStorage.getItem("agents");
@@ -250,7 +245,7 @@ export default function AdminDashboard() {
          {services.map((s) => (
           <tr key={s.id} className="border-b">
            <td className="p-3">
-            {s.image ? <img src={s.image} alt={s.name} className="h-12 w-12 object-cover rounded"/> : "—"}
+            {s.image ? <img src={`${DIR_URL}/${s.image}`} alt={s.name} className="h-12 w-12 object-cover rounded"/> : "—"}
            </td>
            <td className="p-3 font-semibold">{s.name}</td>
            <td className="p-3">{s.description}</td>
