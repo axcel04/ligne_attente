@@ -101,7 +101,7 @@ export default function Login() {
               required
               value={form.email}
               onChange={handleChange}
-              className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600"
+              className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
             />
           </div>
 
@@ -115,7 +115,7 @@ export default function Login() {
               required
               value={form.password}
               onChange={handleChange}
-              className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600"
+              className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
             />
           </div>
 
