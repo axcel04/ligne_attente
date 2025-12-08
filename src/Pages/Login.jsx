@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { AtSign, Lock, Shield, UserCheck, UserCog } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { error, setError } = useAppContext(); 
+  const { login } = useAuth();
 
-  const [role, setRole] = useState("user"); // user | agent | admin
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -16,19 +19,21 @@ export default function Login() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!form.email || !form.password) {
-      alert("Veuillez remplir tous les champs.");
+      setError("Veuillez remplir tous les champs.");
       return;
     }
 
-    localStorage.setItem("authRole", role);
-    localStorage.setItem("authUser", JSON.stringify(form));
-
-    if (role === "user") navigate("/home");
-    if (role === "agent") navigate("/agentDashboard");
-    if (role === "admin") navigate("/adminDashboard");
+    login(form.email, form.password)
+      .then(() => {
+        navigate("/home");
+      })
+      .catch((err) => {
+        console.error("Erreur lors de la connexion :", err?.response?.data || err.message);
+        setError("Email ou mot de passe incorrect.");
+      });
   };
 
   return (
@@ -47,48 +52,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Role Selector */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <button
-            onClick={() => setRole("user")}
-            className={`py-2 rounded-lg border flex items-center justify-center gap-2 
-              ${
-                role === "user"
-                  ? "bg-blue-700 text-white"
-                  : "bg-gray-100 text-gray-700"
-              }`}
-          >
-            <UserCheck className="h-5 w-5" />
-            <span className="text-sm font-medium">Patient</span>
-          </button>
-
-          <button
-            onClick={() => setRole("agent")}
-            className={`py-2 rounded-lg border flex items-center justify-center gap-2 
-              ${
-                role === "agent"
-                  ? "bg-blue-700 text-white"
-                  : "bg-gray-100 text-gray-700"
-              }`}
-          >
-            <UserCog className="h-5 w-5" />
-            <span className="text-sm font-medium">Agent</span>
-          </button>
-
-          <button
-            onClick={() => setRole("admin")}
-            className={`py-2 rounded-lg border flex items-center justify-center gap-2 
-              ${
-                role === "admin"
-                  ? "bg-blue-700 text-white"
-                  : "bg-gray-100 text-gray-700"
-              }`}
-          >
-            <Shield className="h-5 w-5" />
-            <span className="text-sm font-medium">Admin</span>
-          </button>
-        </div>
-
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email */}
@@ -98,7 +61,6 @@ export default function Login() {
               type="email"
               name="email"
               placeholder="Email"
-              required
               value={form.email}
               onChange={handleChange}
               className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
@@ -112,12 +74,18 @@ export default function Login() {
               type="password"
               name="password"
               placeholder="Mot de passe"
-              required
               value={form.password}
               onChange={handleChange}
               className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 outline-none"
             />
           </div>
+
+        {/* show error message */}
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 rounded-lg text-center">
+            {error}
+          </div>
+        )} 
 
           {/* Submit */}
           <button

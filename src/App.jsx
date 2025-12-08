@@ -13,21 +13,24 @@ import Login from "./Pages/Login";
 import AgentDashboard from "./Pages/AgentDashboard";
 import ArchiveAgent from "./Pages/ArchiveAgent";
 import AdminDashboard from "./Pages/AdminDashboard";
+import ProtectedRoute from "./ProtectedRoute";
+
+
 export default function App() {
   return (
   <BrowserRouter>
     <Routes>
-      <Route path="/home" element={<Home />} />
-      <Route path="/servicesPage" element={<ServicesPage />} />
-      <Route path="/notifications" element={<Notifications />} />
+      <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+      <Route path="/servicesPage" element={<ProtectedRoute><ServicesPage /></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
       <Route path="/history" element={<History />} />
       <Route path="/about" element={<About />} />
       <Route path="/conditions" element={<Conditions />} />
       <Route path="/" element={<Register />} />
       <Route path="/login" element={<Login />} />
-      <Route path="agentDashboard" element={<AgentDashboard />} />
-      <Route path="archiveAgent" element={<ArchiveAgent />} />
-      <Route path="adminDashboard" element={<AdminDashboard />} />
+      <Route path="agentDashboard" element={<ProtectedRoute><AgentDashboard /></ProtectedRoute>} />
+      <Route path="archiveAgent" element={<ProtectedRoute><ArchiveAgent /></ProtectedRoute>} />
+      <Route path="adminDashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
     </Routes> 
   </BrowserRouter>
   );
