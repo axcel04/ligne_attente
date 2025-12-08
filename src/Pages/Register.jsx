@@ -30,7 +30,7 @@ export default function Register() {
       setError("Les mots de passe ne correspondent pas.");
       return;
     }
-    axios.post(`${API_URL}/user/register`, form)
+    axios.post(`${API_URL}/user/create`, form)
       .then((response) => {
         console.log("Inscription réussie :", response.data);
         navigate("/login");
