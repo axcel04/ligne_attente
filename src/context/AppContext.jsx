@@ -1,21 +1,30 @@
 // create a globalContext for the app
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext } from 'react'
 
-export const AppContext = createContext();
+export const AppContext = createContext()
 
 export const AppProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const API_URL = "http://localhost:4000/api";
+  const API_URL = "http://localhost:4000/api"
   const DIR_URL = "http://localhost:4000"
+  const [user, setUser] = useState(null)
+  const [error, setError] = useState(null)
+
+  // dismiss error after 3 seconds
+  if(error){
+    setTimeout(() => {
+      setError(null)
+    }, 3000);
+  }
 
   return (
     <AppContext.Provider value={{ 
         user, setUser,
+        error, setError,
         API_URL, DIR_URL,
          }}>
       {children}
     </AppContext.Provider>
-  );
-};
+  )
+}
 
-export const useAppContext = () => useContext(AppContext);
+export const useAppContext = () => useContext(AppContext)

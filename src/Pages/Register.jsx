@@ -5,7 +5,7 @@ import {useAppContext} from "../context/AppContext";
 import axios from "axios";
 
 export default function Register() {
-  const { API_URL } = useAppContext();
+  const { API_URL, error, setError } = useAppContext();
   const navigate = useNavigate();
   const [confirmPassword, setConfirmPassword] = useState("");
   const [form, setForm] = useState({
@@ -21,12 +21,26 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (form.password !== confirmPassword) {
-      alert("Les mots de passe ne correspondent pas.");
+    // form validation
+    if (!form.fullName || !form.email || !form.password || !confirmPassword) {
+      setError("Veuillez remplir tous les champs.");
       return;
     }
-    axios.post()
+    if (form.password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+    axios.post(`${API_URL}/user/register`, form)
+      .then((response) => {
+        console.log("Inscription réussie :", response.data);
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.error("Erreur lors de l'inscription :", error);
+        setError("Erreur lors de l'inscription. Veuillez réessayer.");
+      });
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -52,8 +66,7 @@ export default function Register() {
             <User className="absolute top-3 left-3 text-gray-500 h-5 w-5" />
             <input
               type="text"
-              name="fullName"
-              required
+              name="fullName"              
               placeholder="Nom complet"
               value={form.fullName}
               onChange={handleChange}
@@ -66,8 +79,7 @@ export default function Register() {
             <AtSign className="absolute top-3 left-3 text-gray-500 h-5 w-5" />
             <input
               type="email"
-              name="email"
-              required
+              name="email"              
               placeholder="Email"
               value={form.email}
               onChange={handleChange}
@@ -80,8 +92,7 @@ export default function Register() {
             <Lock className="absolute top-3 left-3 text-gray-500 h-5 w-5" />
             <input
               type="password"
-              name="password"
-              required
+              name="password"              
               placeholder="Mot de passe"
               value={form.password}
               onChange={handleChange}
@@ -94,14 +105,20 @@ export default function Register() {
             <Lock className="absolute top-3 left-3 text-gray-500 h-5 w-5" />
             <input
               type="password"
-              name="confirmPassword"
-              required
+              name="confirmPassword"            
               placeholder="Confirmer le mot de passe"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
+
+        {/* show error message */}
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 rounded-lg text-center">
+            {error}
+          </div>
+        )} 
 
           {/* Submit */}
           <button
