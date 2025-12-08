@@ -3,15 +3,20 @@ export const AuthContext = createContext()
 import { useAppContext } from "./AppContext"
 import axios from "axios"
 
+
 export const AuthProvider = ({ children }) => {
   const { API_URL } = useAppContext()
+  const [loading, setLoading] = useState(true)
 
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(localStorage.getItem("token") || null)
 
   // fetch user profile when token changes
   useEffect(() => {
-    if (!token) return
+    if (!token) {
+      setLoading(false)
+      return
+    }
     axios.get(`${API_URL}/user/me`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -25,6 +30,9 @@ export const AuthProvider = ({ children }) => {
       setUser(null)
       setToken(null)
       localStorage.removeItem("token")
+    })
+    .finally(() => {
+      setLoading(false)
     })
   }, [token])
 
@@ -49,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   )

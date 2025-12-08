@@ -20,17 +20,17 @@ export default function App() {
   return (
   <BrowserRouter>
     <Routes>
-      <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-      <Route path="/servicesPage" element={<ProtectedRoute><ServicesPage /></ProtectedRoute>} />
+      <Route path="/home" element={<ProtectedRoute><Home/></ProtectedRoute>} />
+      <Route path="/services" element={<ServicesPage />} />
       <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
       <Route path="/history" element={<History />} />
       <Route path="/about" element={<About />} />
       <Route path="/conditions" element={<Conditions />} />
       <Route path="/" element={<Register />} />
       <Route path="/login" element={<Login />} />
-      <Route path="agentDashboard" element={<ProtectedRoute><AgentDashboard /></ProtectedRoute>} />
-      <Route path="archiveAgent" element={<ProtectedRoute><ArchiveAgent /></ProtectedRoute>} />
-      <Route path="adminDashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+      <Route path="agent" element={<ProtectedRoute><AgentDashboard /></ProtectedRoute>} />
+      <Route path="archive" element={<ProtectedRoute><ArchiveAgent /></ProtectedRoute>} />
+      <Route path="admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
     </Routes> 
   </BrowserRouter>
   );
