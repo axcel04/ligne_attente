@@ -1,7 +1,7 @@
 // AdminDashboard.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useAppContext from "../context/AppContext";
+import {useAppContext} from "../context/AppContext";
 import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu,} from "lucide-react";
 
 

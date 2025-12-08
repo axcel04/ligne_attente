@@ -18,6 +18,4 @@ export const AppProvider = ({ children }) => {
   );
 };
 
-const useAppContext = () => useContext(AppContext);
-
-export default useAppContext;
+export const useAppContext = () => useContext(AppContext);

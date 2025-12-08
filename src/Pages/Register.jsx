@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { AtSign, Lock, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {useAppContext} from "../context/AppContext";
 import axios from "axios";
 
 export default function Register() {
+  const { API_URL } = useAppContext();
   const navigate = useNavigate();
   const [confirmPassword, setConfirmPassword] = useState("");
   const [form, setForm] = useState({
