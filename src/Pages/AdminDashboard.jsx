@@ -1,13 +1,13 @@
 // AdminDashboard.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import useAppContext from "../context/AppContext";
 import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu,} from "lucide-react";
 
-const API_URL = "http://localhost:4000/api";
-const DIR_URL = "http://localhost:4000"
 
 
 export default function AdminDashboard() {
+ const { API_URL, DIR_URL } = useAppContext();
  const [activeSection, setActiveSection] = useState("Services");
  const [showSidebar, setShowSidebar] = useState(false);
  const [showAddServiceModal, setShowAddServiceModal] = useState(false);
