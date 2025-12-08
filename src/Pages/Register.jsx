@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { AtSign, Lock, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Register() {
   const navigate = useNavigate();
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [form, setForm] = useState({
     fullName: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -18,13 +19,11 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (form.password !== form.confirmPassword) {
+    if (form.password !== confirmPassword) {
       alert("Les mots de passe ne correspondent pas.");
       return;
     }
-
-    alert("Inscription réussie !");
-    navigate("/login");
+    axios.post()
   };
 
   return (
@@ -96,8 +95,8 @@ export default function Register() {
               name="confirmPassword"
               required
               placeholder="Confirmer le mot de passe"
-              value={form.confirmPassword}
-              onChange={handleChange}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>

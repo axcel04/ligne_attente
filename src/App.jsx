@@ -15,9 +15,7 @@ import ArchiveAgent from "./Pages/ArchiveAgent";
 import AdminDashboard from "./Pages/AdminDashboard";
 export default function App() {
   return (
-  // < Header />
   <BrowserRouter>
-    {/* <Header /> */}
     <Routes>
       <Route path="/home" element={<Home />} />
       <Route path="/servicesPage" element={<ServicesPage />} />
@@ -31,8 +29,6 @@ export default function App() {
       <Route path="archiveAgent" element={<ArchiveAgent />} />
       <Route path="adminDashboard" element={<AdminDashboard />} />
     </Routes> 
-    {/* <Footer />
-    <Footer1 /> */}
   </BrowserRouter>
   );
 }
