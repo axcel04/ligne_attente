@@ -28,7 +28,7 @@ export default function Login() {
 
     login(form.email, form.password)
       .then(() => {
-        navigate("/home");
+        navigate("/");
       })
       .catch((err) => {
         console.error("Erreur lors de la connexion :", err?.response?.data || err.message);
