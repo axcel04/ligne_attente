@@ -1,8 +1,10 @@
 import React from "react";
-import { Bell } from "lucide-react"; // On utilise lucide-react pour les icônes
+import { Bell, LucideLogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
+  const { logout } = useAuth();
   const navigate = useNavigate();
   return (
     <header className="flex justify-between items-center px-6 py-4 shadow-md bg-white sticky top-0 z-50">
@@ -28,6 +30,14 @@ export default function Header() {
             3 {/* Nombre de notifications à remplacer dynamiquement */}
           </span>
         </button>
+        {/* logout button */}
+        <LucideLogOut
+          onClick={() => {
+            logout();
+            navigate("/login");
+          }}
+          className="ml-4 w-6 h-6 text-red-600 hover:text-red-800 cursor-pointer"
+        />
       </div>
     </header>
   );

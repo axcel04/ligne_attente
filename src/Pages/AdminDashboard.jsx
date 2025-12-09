@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {useAppContext} from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
 import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu,} from "lucide-react";
 
 
 
 export default function AdminDashboard() {
  const { API_URL, DIR_URL } = useAppContext();
+ const { logout } = useAuth();
  const [activeSection, setActiveSection] = useState("Services");
  const [showSidebar, setShowSidebar] = useState(false);
  const [showAddServiceModal, setShowAddServiceModal] = useState(false);
@@ -136,10 +138,9 @@ export default function AdminDashboard() {
    id: editData ? editData.id : Date.now(),
    name: f.get("name"),
    email: f.get("email"),
-   password: f.get("password"),
    service: f.get("service"),
   };
-
+  console.log(newAgent);return
   if (editData) setAgents((prev) => prev.map((a) => (a.id === editData.id ? newAgent : a)));
   else setAgents((prev) => [newAgent, ...prev]);
 
@@ -203,7 +204,13 @@ export default function AdminDashboard() {
      onClick={handleLogout}
      className="mt-12 flex items-center gap-2 text-red-600 hover:text-red-700 font-semibold"
     >
-     <LogOut className="h-5 w-5" /> Déconnexion
+     <LogOut
+      onClick={()=> {
+        logout();
+        Navigate('/login');
+      }}
+      className="h-5 w-5"
+      /> Déconnexion
     </button>
    </aside>
 
@@ -372,8 +379,7 @@ export default function AdminDashboard() {
      fields={[
       { label: "Nom complet", name: "name", default: editData?.name },
       { label: "Email", name: "email", default: editData?.email },
-      { label: "Mot de passe", name: "password", default: editData?.password },
-      { label: "Service", name: "service", type: "select", options: services.map((s) => s.name), default: editData?.service },
+      { label: "Service", name: "service", type: "select", options: services.map((s) => s.name), values: services.map((s) => s.id), default: editData?.service },
      ]}
     />
    )}
@@ -400,7 +406,7 @@ function Modal({ title, onClose, onSubmit, fields }) {
 
       {f.type === "select" ? (
        <select name={f.name} defaultValue={f.default} className="border p-2 rounded w-full">
-        {f.options.map((o) => <option key={o}>{o}</option>)}
+        {f.options.map((o, index) => <option key={o} value={f.values[index]}>{o}</option>)}
        </select>
       ) : f.textarea ? (
        <textarea name={f.name} defaultValue={f.default} className="border p-2 rounded w-full"></textarea>
