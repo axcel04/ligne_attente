@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useApi } from "../api"
 import {useAppContext} from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
-import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu,} from "lucide-react";
+import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu, CrownIcon,} from "lucide-react";
 
 export default function AdminDashboard() {
  const { API_URL, DIR_URL, error, setError, agents,setAgents } = useAppContext();
@@ -109,7 +109,6 @@ const handleSaveService = async (e) => {
    role: "agent",
    password: "123456", // default password
   };
-console.log("isEdit:", isEdit); 
   if(isEdit){
     api.put(`${API_URL}/user/${editData.id}`, newAgent)
     .then((response) => {
@@ -138,6 +137,19 @@ console.log("isEdit:", isEdit);
       });
     };
   };
+
+  // setAdminUser
+  const setAdminUser = (id) => {
+    api.put(`${API_URL}/user/${id}`, { role: "admin" })
+      .then((response) => {
+        console.log("Rôle d'admin attribué avec succès :", response.data);
+        getAgents();
+      })
+      .catch((error) => {
+        console.error("Erreur lors de l'attribution du rôle d'admin :", error);
+        setError("Erreur lors de l'attribution du rôle d'admin. Veuillez réessayer.");
+      });
+  }
 
 
  const handleDeleteAgent = (id) => {
@@ -318,6 +330,8 @@ console.log("isEdit:", isEdit);
              onClick={() => { setEditData(a); setShowAddAgentModal(true);  setIsEdit(true) }} />
             <Trash2 className="text-red-600 cursor-pointer"
              onClick={() => handleDeleteAgent(a.id)} />
+            <CrownIcon lassName="text-blue-600 cursor-pointer"
+            onClick={() => { setAdminUser(a.id) }} />
            </td>
           </tr>
          ))}
@@ -335,6 +349,8 @@ console.log("isEdit:", isEdit);
             onClick={() => { setEditData(a); setShowAddAgentModal(true); setIsEdit(true) }} />
            <Trash2 className="text-red-600 cursor-pointer"
             onClick={() => handleDeleteAgent(a.id)} />
+            <CrownIcon lassName="text-blue-600 cursor-pointer"
+            onClick={() => { setAdminUser(a.id) }} />
           </div>
          </div>
         ))}
