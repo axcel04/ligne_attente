@@ -1,32 +1,37 @@
-import { Clock, CheckCircle, XCircle } from "lucide-react";
+import { Clock } from "lucide-react";
+import { useState, useEffect } from "react";
 import Header from "../Component/Header";
 import Footer1 from "../Component/Footer1";
 import Footer from "../Component/Footer";
+import { useAppContext } from "../context/AppContext";
+import { useApi } from "../api";
 
 export default function History() {
-  const tickets = [
-    {
-      id: "A245",
-      service: "Consultation Générale",
-      date: "28 Nov 2025 • 11:35",
-      status: "en_attente",
-      position: 5,
-    },
-    {
-      id: "B102",
-      service: "Laboratoire",
-      date: "27 Nov 2025 • 14:12",
-      status: "servi",
-      position: 0,
-    },
-    {
-      id: "C078",
-      service: "Urgence",
-      date: "25 Nov 2025 • 08:20",
-      status: "annule",
-      position: 0,
-    },
-  ];
+  const { API_URL } = useAppContext();
+  const api = useApi();
+  const [tickets, setTickets] = useState([]);
+
+  useEffect(() => {
+    api
+      .get(`${API_URL}/ticket`)
+      .then((response) => {
+        // map tickets to desired format 
+        console.log(response.data);
+        const mappedTickets = response.data.map((t) => ({
+          id: t.id,
+          service: t.Service.name,
+          date: new Date(t.created_at).toLocaleString(),
+          position: `A0${t.id}` || null,
+          status: t.status,
+        }));
+        setTickets(mappedTickets);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des tickets :", error);
+      });
+  }, []);
+
+
 
   const getStatusStyle = (status) => {
     switch (status) {
