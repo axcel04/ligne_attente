@@ -1,15 +1,14 @@
 // AdminDashboard.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useApi } from "../api"
 import {useAppContext} from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu,} from "lucide-react";
 
-
-
 export default function AdminDashboard() {
- const { API_URL, DIR_URL, error, setError } = useAppContext();
+ const { API_URL, DIR_URL, error, setError, agents,setAgents } = useAppContext();
  const { logout } = useAuth();
+ const api = useApi();
  const [activeSection, setActiveSection] = useState("Services");
  const [showSidebar, setShowSidebar] = useState(false);
  const [showAddServiceModal, setShowAddServiceModal] = useState(false);
@@ -19,26 +18,21 @@ export default function AdminDashboard() {
  // load from localStorage if present, otherwise default
  const [services, setServices] = useState([]);
  useEffect(()=> {
-  axios.get(`${API_URL}/service`)
+  api.get(`${API_URL}/service`)
     .then(resp => {
       setServices(resp.data)
     })
     .catch(err => console.log(err.message))
  },[])
- const [agents, setAgents] = useState(() => {
+
+ const getAgents = async () => {
   try {
-   const raw = localStorage.getItem("agents");
-   return raw ? JSON.parse(raw) : [
-    { id: 1, name: "Jean Paul", email: "jp@gmail.com", password: "123456", service: "Radiologie" },
-    { id: 2, name: "Marie Claire", email: "mc@gmail.com", password: "azerty", service: "Laboratoire" },
-   ];
-  } catch {
-   return [
-    { id: 1, name: "Jean Paul", email: "jp@gmail.com", password: "123456", service: "Radiologie" },
-    { id: 2, name: "Marie Claire", email: "mc@gmail.com", password: "azerty", service: "Laboratoire" },
-   ];
+   const res = await api.get(`${API_URL}/user/agents`);
+   setAgents(res.data);
+  } catch (err) {
+   console.error("Erreur lors de la récupération des agents :", err?.message || err);
   }
- });
+ };
 
  const [patients] = useState([
   { id: 1, name: "Patient Alpha", service: "Radiologie" },
@@ -46,20 +40,6 @@ export default function AdminDashboard() {
   { id: 3, name: "Patient Charlie", service: "Laboratoire" },
  ]);
 
- // persist services & agents to localStorage when they change
- useEffect(() => {
-  localStorage.setItem("services", JSON.stringify(services));
- }, [services]);
-
- useEffect(() => {
-  localStorage.setItem("agents", JSON.stringify(agents));
- }, [agents]);
-
- // Logout
- const handleLogout = () => {
-  localStorage.clear();
-  window.location.href = "/login";
- };
 
  // Ajouter/Modifier Service
  const handleSaveService = async (e) => {
@@ -82,7 +62,7 @@ export default function AdminDashboard() {
 
   // Try to send to backend
   try {
-   const res = await axios.post(`${API_URL}/service`, formData, {
+   const res = await api.post(`${API_URL}/service`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
    });
 
@@ -143,7 +123,7 @@ export default function AdminDashboard() {
    password: "123456", // default password
   };
   console.log("Creating agent:", newAgent);
-  axios.post(`${API_URL}/user/create`, newAgent)
+  api.post(`${API_URL}/user/create`, newAgent)
     .then((response) => {
       console.log("Agent créé avec succès :", response.data);
       setEditData(null);
@@ -188,13 +168,14 @@ export default function AdminDashboard() {
 
     <ul className="space-y-4">
      {[{ label: "Services", icon: Settings },
-      { label: "Agents", icon: Users },
+      { label: "Agents", icon: Users, action: getAgents },
       { label: "Rapports", icon: LineChart },
       { label: "Archives", icon: Archive },
      ].map((item) => (
       <li
        key={item.label}
        onClick={() => {
+        if (item.action) item.action();
         setActiveSection(item.label);
         setShowSidebar(false);
        }}
@@ -208,7 +189,6 @@ export default function AdminDashboard() {
     </ul>
 
     <button
-     onClick={handleLogout}
      className="mt-12 flex items-center gap-2 text-red-600 hover:text-red-700 font-semibold"
     >
      <LogOut

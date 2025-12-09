@@ -8,6 +8,7 @@ export const AppProvider = ({ children }) => {
   const DIR_URL = "http://localhost:4000"
   const [user, setUser] = useState(null)
   const [error, setError] = useState(null)
+  const [agents, setAgents] = useState([])
 
   // dismiss error after 3 seconds
   if(error){
@@ -21,6 +22,7 @@ export const AppProvider = ({ children }) => {
         user, setUser,
         error, setError,
         API_URL, DIR_URL,
+        agents,setAgents 
          }}>
       {children}
     </AppContext.Provider>
