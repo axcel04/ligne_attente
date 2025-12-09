@@ -85,7 +85,15 @@ const handleSaveService = async (e) => {
 
 
  const handleDeleteService = (id) => {
-  setServices((prev) => prev.filter((s) => s.id !== id));
+  api.delete(`${API_URL}/service/${id}`)
+    .then((response) => {
+      getServices();
+      console.log("Service supprimé avec succès :", response.data);
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la suppression du service :", error);
+      setError("Erreur lors de la suppression du service. Veuillez réessayer.");
+    });
  };
 
  // Ajouter/Modifier Agent
