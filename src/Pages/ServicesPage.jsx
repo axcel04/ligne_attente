@@ -1,14 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Users, Activity, Stethoscope, TestTube, AlertCircle } from "lucide-react"; // icônes Lucide
 import ModalTicket from "../Component/ModalTicket";
-import { services } from "../data/services";
 import Header from "../Component/Header";
 import Footer from "../Component/Footer";
 import Footer1 from "../Component/Footer1";
+import { useApi } from "../api"
+import { useAppContext } from "../context/AppContext";
+
 
 export default function ServicesPage() {
+  const api = useApi();
+  const { API_URL, DIR_URL, setError, setMsg } = useAppContext();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    api.get(`${API_URL}/service`)
+      .then((response) => {
+        setServices(response.data);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des services :", error);
+        setError("Erreur lors de la récupération des services. Veuillez recharger la page.");
+      }); 
+  }, []);
 
   const handleOpenModal = (service) => {
     setSelectedService(service);
@@ -20,13 +36,6 @@ export default function ServicesPage() {
     setSelectedService(null);
   };
 
-  // Associer chaque service à une icône Lucide
-  const iconMap = {
-    "Consultation Générale": <Stethoscope className="h-10 w-10 text-blue-500 mb-4" />,
-    Laboratoire: <TestTube className="h-10 w-10 text-green-500 mb-4" />,
-    Radiologie: <Activity className="h-10 w-10 text-purple-500 mb-4" />,
-    Urgence: <AlertCircle className="h-10 w-10 text-red-500 mb-4" />,
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -51,7 +60,7 @@ export default function ServicesPage() {
             className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col items-center p-6 text-center"
           >
             {/* Icon Lucide */}
-            <h2 className="h-10 w-10 text-gray-500 mb-4">{service.icon}</h2>
+            <img src={`${DIR_URL}/${service.image}`} alt={service.name} className="h-12 w-12 object-cover rounded"/>
 
             <h3 className="text-lg sm:text-xl font-semibold text-gray-800">{service.name}</h3>
             <p className="text-gray-500 mt-2 text-sm sm:text-base">{service.description}</p>

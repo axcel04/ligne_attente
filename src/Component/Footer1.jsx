@@ -10,7 +10,7 @@ export default function Footer1() {
       <div className="flex justify-around items-center py-3">
         
         {/* Prendre un ticket */}
-        <button onClick={()=>navigate("/servicesPage")} className="flex flex-col items-center text-gray-700 hover:text-blue-600">
+        <button onClick={()=>navigate("/services")} className="flex flex-col items-center text-gray-700 hover:text-blue-600">
           <TicketIcon className="w-6 h-6" />
           <span className="text-xs mt-1">Ticket</span>
         </button>
