@@ -1,35 +1,32 @@
 import React, { useState, useEffect } from "react";
 import {
-  Users,
-  Ticket,
-  CheckCircle2,
-  Activity,
-  Search,
-  LogOut,
-  ArrowRightCircle,
-  Bell,
-  Menu,
-  X,
-  Home,
-} from "lucide-react";
+  Users, Ticket, CheckCircle2, Activity, Search, LogOut, ArrowRightCircle, Bell, Menu, X, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useApi } from '../api';
+import { useAppContext } from "../context/AppContext";
 import ArchiveAgent from "./ArchiveAgent";
 
 export default function AgentDashboard() {
+  const api = useApi();
+  const { API_URL } = useAppContext();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [agentMode, setAgentMode] = useState(false)
-
-  const services = [
-    "Consultation Générale",
-    "Laboratoire",
-    "Radiologie",
-    "Urgence",
-  ];
-
-  const [activeService, setActiveService] = useState(services[0]);
+  const [services, setServices] = useState([]); 
+  const [activeService, setActiveService] = useState({});
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    api.get(`${API_URL}/service`)
+      .then(response => {
+        setServices(response.data);
+        setActiveService(response.data[0]);
+      })
+      .catch(error => {
+        console.error("Erreur lors de la récupération des services :", error);
+      }); 
+  })
 
   const [ticketsData, setTicketsData] = useState({
     "Consultation Générale": [
@@ -121,7 +118,7 @@ export default function AgentDashboard() {
               Tableau de bord
             </h1>
             <span className="text-blue-600 font-semibold text-sm">
-              {activeService}
+              {activeService.name || "Sélectionner un service"}
             </span>
           </div>
         </div>
@@ -164,23 +161,22 @@ export default function AgentDashboard() {
         <h2 className="text-lg font-bold mb-6 px-2">Services</h2>
         <ul className="space-y-1">
           {services.map((s) => (
-            <li key={s}>
+            <li key={s.id}>
               <button
                 onClick={() => handleServiceChange(s)}
                 className={`
                   w-full text-left p-3 rounded-lg font-medium transition-all
-                  ${activeService === s
+                  ${activeService?.id === s.id
                     ? "bg-blue-600 text-white"
                     : "hover:bg-gray-100"
                   }
                 `}
               >
-                {s}
+                {s.name}
               </button>
             </li>
           ))}
         </ul>
-
         <div className="mt-auto pt-6 border-t">
           <button
           onClick={() => {
