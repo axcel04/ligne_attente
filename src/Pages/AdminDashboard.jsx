@@ -28,6 +28,7 @@ export default function AdminDashboard() {
  const getAgents = async () => {
   try {
    const res = await api.get(`${API_URL}/user/agents`);
+   console.log("Agents récupérés :", res.data);
    setAgents(res.data);
   } catch (err) {
    console.error("Erreur lors de la récupération des agents :", err?.message || err);
@@ -291,7 +292,6 @@ export default function AdminDashboard() {
          <tr className="bg-gray-50 text-gray-600">
           <th className="p-3">Nom</th>
           <th className="p-3">Email</th>
-          <th className="p-3">Password</th>
           <th className="p-3">Service</th>
           <th className="p-3">Actions</th>
          </tr>
@@ -299,9 +299,8 @@ export default function AdminDashboard() {
         <tbody>
          {agents.map((a) => (
           <tr key={a.id} className="border-b">
-           <td className="p-3 font-semibold">{a.name}</td>
+           <td className="p-3 font-semibold">{a.fullName}</td>
            <td className="p-3">{a.email}</td>
-           <td className="p-3">{a.password}</td>
            <td className="p-3">{a.service}</td>
            <td className="p-3 flex gap-3">
             <Pencil className="text-blue-600 cursor-pointer"
@@ -317,10 +316,9 @@ export default function AdminDashboard() {
        <div className="md:hidden grid gap-4 mt-4">
         {agents.map((a) => (
          <div key={a.id} className="border p-4 rounded-lg shadow">
-          <h4 className="font-bold text-lg">{a.name}</h4>
+          <h4 className="font-bold text-lg">{a.fullName}</h4>
           <p className="text-gray-600">{a.email}</p>
-          <p className="text-gray-600">{a.password}</p>
-          <p className="text-gray-600">Service : {a.service}</p>
+          <p className="text-gray-600">Service : {a.fullName}</p>
           <div className="flex gap-6 mt-3">
            <Pencil className="text-blue-600 cursor-pointer"
             onClick={() => { setEditData(a); setShowAddAgentModal(true); }} />
