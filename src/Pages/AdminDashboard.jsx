@@ -109,7 +109,7 @@ const handleSaveService = async (e) => {
    role: "agent",
    password: "123456", // default password
   };
-
+console.log("isEdit:", isEdit); 
   if(isEdit){
     api.put(`${API_URL}/user/${editData.id}`, newAgent)
     .then((response) => {
@@ -237,7 +237,6 @@ const handleSaveService = async (e) => {
          <Plus /> Ajouter
         </button>
        </div>
-update agent works fine
        {/* TABLE PC */}
        <table className="hidden md:table w-full mt-4">
         <thead>
@@ -292,7 +291,7 @@ update agent works fine
        <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold">Agents</h3>
         <button
-         onClick={() => { setEditData(null); setShowAddAgentModal(true);  setIsEdit(true) }}
+         onClick={() => { setEditData(null); setShowAddAgentModal(true) }}
          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
         >
          <Plus /> Ajouter
@@ -333,7 +332,7 @@ update agent works fine
           <p className="text-gray-600">Service : {a.Service.name}</p>
           <div className="flex gap-6 mt-3">
            <Pencil className="text-blue-600 cursor-pointer"
-            onClick={() => { setEditData(a); setShowAddAgentModal(true); }} />
+            onClick={() => { setEditData(a); setShowAddAgentModal(true); setIsEdit(true) }} />
            <Trash2 className="text-red-600 cursor-pointer"
             onClick={() => handleDeleteAgent(a.id)} />
           </div>
