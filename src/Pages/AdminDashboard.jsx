@@ -14,6 +14,7 @@ export default function AdminDashboard() {
  const [showAddServiceModal, setShowAddServiceModal] = useState(false);
  const [showAddAgentModal, setShowAddAgentModal] = useState(false);
  const [editData, setEditData] = useState(null);
+ const [ isEdit, setIsEdit ] = useState(false);
 
  // load from localStorage if present, otherwise default
  const [services, setServices] = useState([]);
@@ -123,18 +124,36 @@ export default function AdminDashboard() {
    role: "agent",
    password: "123456", // default password
   };
-  api.post(`${API_URL}/user/create`, newAgent)
+  console.log("Saving agent:", newAgent, isEdit);
+  if(isEdit){
+    api.put(`${API_URL}/user/${editData.id}`, newAgent)
     .then((response) => {
-      console.log("Agent créé avec succès :", response.data);
+      console.log("Agent mis à jour avec succès :", response.data);
       getAgents();
       setEditData(null);
       setShowAddAgentModal(false);
     })
     .catch((error) => {
-      console.error("Erreur lors de la création de l'agent :", error);
-      setError("Erreur lors de la création de l'agent. Veuillez réessayer.");
+      console.error("Erreur lors de la mise à jour de l'agent :", error);
+      setError("Erreur lors de la mise à jour de l'agent. Veuillez réessayer.");
     });
- };
+    return;
+  }
+  else {
+    api.post(`${API_URL}/user/create`, newAgent)
+      .then((response) => {
+        console.log("Agent créé avec succès :", response.data);
+        getAgents();
+        setEditData(null);
+        setShowAddAgentModal(false);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la création de l'agent :", error);
+        setError("Erreur lors de la création de l'agent. Veuillez réessayer.");
+      });
+    };
+  };
+
 
  const handleDeleteAgent = (id) => {
   api.delete(`${API_URL}/user/${id}`)
@@ -238,7 +257,7 @@ export default function AdminDashboard() {
        <table className="hidden md:table w-full mt-4">
         <thead>
          <tr className="bg-gray-50 text-gray-600">
-          <th className="p-3">Image</th>
+          <th className="p-3"></th>
           <th className="p-3">Nom</th>
           <th className="p-3">Description</th>
           <th className="p-3">Actions</th>
@@ -254,7 +273,7 @@ export default function AdminDashboard() {
            <td className="p-3">{s.description}</td>
            <td className="p-3 flex gap-3">
             <Pencil className="text-blue-600 cursor-pointer"
-             onClick={() => { setEditData(s); setShowAddServiceModal(true); }} />
+             onClick={() => { setEditData(s); setShowAddServiceModal(true); setIsEdit(true) }} />
             <Trash2 className="text-red-600 cursor-pointer"
              onClick={() => handleDeleteService(s.id)} />
            </td>
@@ -272,7 +291,7 @@ export default function AdminDashboard() {
           <p className="text-gray-600">{s.description}</p>
           <div className="flex gap-6 mt-3">
            <Pencil className="text-blue-600 cursor-pointer"
-            onClick={() => { setEditData(s); setShowAddServiceModal(true); }} />
+            onClick={() => { setEditData(s); setShowAddServiceModal(true); setIsEdit(true) }} />
            <Trash2 className="text-red-600 cursor-pointer"
             onClick={() => handleDeleteService(s.id)} />
           </div>
@@ -288,7 +307,7 @@ export default function AdminDashboard() {
        <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold">Agents</h3>
         <button
-         onClick={() => { setEditData(null); setShowAddAgentModal(true); }}
+         onClick={() => { setEditData(null); setShowAddAgentModal(true);  setIsEdit(true) }}
          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
         >
          <Plus /> Ajouter
@@ -312,7 +331,7 @@ export default function AdminDashboard() {
            <td className="p-3">{a.Service.name}</td>
            <td className="p-3 flex gap-3">
             <Pencil className="text-blue-600 cursor-pointer"
-             onClick={() => { setEditData(a); setShowAddAgentModal(true); }} />
+             onClick={() => { setEditData(a); setShowAddAgentModal(true);  setIsEdit(true) }} />
             <Trash2 className="text-red-600 cursor-pointer"
              onClick={() => handleDeleteAgent(a.id)} />
            </td>
