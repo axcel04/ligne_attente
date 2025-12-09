@@ -119,14 +119,14 @@ export default function AdminDashboard() {
    id: editData ? editData.id : Date.now(),
    fullName: f.get("name"),
    email: f.get("email"),
-   service: f.get("service"),
+   serviceId: f.get("service"),
    role: "agent",
    password: "123456", // default password
   };
-  console.log("Creating agent:", newAgent);
   api.post(`${API_URL}/user/create`, newAgent)
     .then((response) => {
       console.log("Agent créé avec succès :", response.data);
+      getAgents();
       setEditData(null);
       setShowAddAgentModal(false);
     })
@@ -137,7 +137,15 @@ export default function AdminDashboard() {
  };
 
  const handleDeleteAgent = (id) => {
-  setAgents((prev) => prev.filter((a) => a.id !== id));
+  api.delete(`${API_URL}/user/${id}`)
+    .then((response) => {
+      getAgents();
+      console.log("Agent supprimé avec succès :", response.data);
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la suppression de l'agent :", error);
+      setError("Erreur lors de la suppression de l'agent. Veuillez réessayer.");
+    }); 
  };
 
  const patientsByService = services.map((s) => ({
@@ -301,7 +309,7 @@ export default function AdminDashboard() {
           <tr key={a.id} className="border-b">
            <td className="p-3 font-semibold">{a.fullName}</td>
            <td className="p-3">{a.email}</td>
-           <td className="p-3">{a.service}</td>
+           <td className="p-3">{a.Service.name}</td>
            <td className="p-3 flex gap-3">
             <Pencil className="text-blue-600 cursor-pointer"
              onClick={() => { setEditData(a); setShowAddAgentModal(true); }} />
@@ -318,7 +326,7 @@ export default function AdminDashboard() {
          <div key={a.id} className="border p-4 rounded-lg shadow">
           <h4 className="font-bold text-lg">{a.fullName}</h4>
           <p className="text-gray-600">{a.email}</p>
-          <p className="text-gray-600">Service : {a.fullName}</p>
+          <p className="text-gray-600">Service : {a.Service.name}</p>
           <div className="flex gap-6 mt-3">
            <Pencil className="text-blue-600 cursor-pointer"
             onClick={() => { setEditData(a); setShowAddAgentModal(true); }} />
