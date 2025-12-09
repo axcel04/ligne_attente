@@ -25,17 +25,17 @@ export default function App() {
     <BrowserRouter>
       {/* <Header /> */}
       <Routes>
-        <Route path="/home" element={<ProtectedRoute allowedRoles={['user']}><Home/></ProtectedRoute>} />
+        <Route path="/" element={<ProtectedRoute allowedRoles={['user']}><Home/></ProtectedRoute>} />
         <Route path="/services" element={<ProtectedRoute allowedRoles={['user']}><ServicesPage/></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute allowedRoles={['user']}><Notifications/></ProtectedRoute>} />
         <Route path="/history" element={<ProtectedRoute allowedRoles={['user']}><History/></ProtectedRoute>} />
         <Route path="/about" element={<ProtectedRoute allowedRoles={['user', 'admin', 'agent']}><About/></ProtectedRoute>} />
         <Route path="/conditions" element={<ProtectedRoute allowedRoles={['user', 'admin', 'agent']}><Conditions/></ProtectedRoute>} />
-        <Route path="/" element={<Register />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="agent" element={<ProtectedRoute allowedRoles={['agent']}><AgentDashboard /></ProtectedRoute>} />
-        <Route path="archive" element={<ProtectedRoute allowedRoles={['agent', 'admin']}><ArchiveAgent /></ProtectedRoute>} />
-        <Route path="admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/agent" element={<ProtectedRoute allowedRoles={['agent']}><AgentDashboard /></ProtectedRoute>} />
+        <Route path="/archive" element={<ProtectedRoute allowedRoles={['agent', 'admin']}><ArchiveAgent /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
         <Route path="/unauthorized" element={<Unauthorized/>} />
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes> 

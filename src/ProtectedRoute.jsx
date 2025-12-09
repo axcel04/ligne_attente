@@ -10,7 +10,11 @@ export default function ProtectedRoute({ allowedRoles, children }) {
   // checked → no user
   if (!user) return <Navigate to="/login" />
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" />
+    // shwow dedicated page instead of unauthoorized
+    if (user.role === 'user') 
+      return <Navigate to="/" />
+    else
+      return <Navigate to={`/${user.role}`} />
   }
 
   return children

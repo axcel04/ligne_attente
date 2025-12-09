@@ -100,7 +100,7 @@ export default function Login() {
         <p className="text-center mt-4 text-sm text-gray-600 pb-4">
           Pas encore de compte ?
           <span
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/register")}
             className="text-blue-700 font-medium cursor-pointer hover:underline"
           >
             {" "}
