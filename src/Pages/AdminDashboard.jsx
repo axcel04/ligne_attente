@@ -1,12 +1,14 @@
-// AdminDashboard.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useApi } from "../api"
+import { showToast } from "../utils/showToast";
 import {useAppContext} from "../context/AppContext";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu, CrownIcon,} from "lucide-react";
 
 export default function AdminDashboard() {
- const { API_URL, DIR_URL, error, setError, agents,setAgents } = useAppContext();
+  const navigate = useNavigate();
+ const { API_URL, DIR_URL, msg, error, setMsg, setError, agents,setAgents } = useAppContext();
  const { logout } = useAuth();
  const api = useApi();
  const [activeSection, setActiveSection] = useState("Services");
@@ -16,7 +18,15 @@ export default function AdminDashboard() {
  const [editData, setEditData] = useState(null);
  const [ isEdit, setIsEdit ] = useState(false);
 
- // load from localStorage if present, otherwise default
+  useEffect(() => {
+    if (msg) {
+      showToast(msg, "success");
+    }
+    if (error) {
+      showToast(error, "error");
+    }
+  }, [msg, error]);
+
  const [services, setServices] = useState([]);
  const getServices = () => {
   api.get(`${API_URL}/service`)
@@ -32,10 +42,9 @@ export default function AdminDashboard() {
  const getAgents = async () => {
   try {
    const res = await api.get(`${API_URL}/user/agents`);
-   console.log("Agents récupérés :", res.data);
    setAgents(res.data);
   } catch (err) {
-   console.error("Erreur lors de la récupération des agents :", err?.message || err);
+    setError("Erreur lors de la récupération des agents. Veuillez réessayer.");
   }
  };
 
@@ -73,9 +82,10 @@ const handleSaveService = async (e) => {
     }
 
     await getServices();
+    setMsg("Service enregistré avec succès.");
 
   } catch (err) {
-    console.error("Save service failed:", err);
+    setError("Erreur lors de l'enregistrement du service. Veuillez réessayer.");
   } finally {
     setEditData(null);
     setIsEdit(false);
@@ -88,10 +98,9 @@ const handleSaveService = async (e) => {
   api.delete(`${API_URL}/service/${id}`)
     .then((response) => {
       getServices();
-      console.log("Service supprimé avec succès :", response.data);
+      setMsg("Service supprimé avec succès.");
     })
     .catch((error) => {
-      console.error("Erreur lors de la suppression du service :", error);
       setError("Erreur lors de la suppression du service. Veuillez réessayer.");
     });
  };
@@ -112,13 +121,12 @@ const handleSaveService = async (e) => {
   if(isEdit){
     api.put(`${API_URL}/user/${editData.id}`, newAgent)
     .then((response) => {
-      console.log("Agent mis à jour avec succès :", response.data);
+      setMsg("Agent mis à jour avec succès.");
       getAgents();
       setEditData(null);
       setShowAddAgentModal(false);
     })
     .catch((error) => {
-      console.error("Erreur lors de la mise à jour de l'agent :", error);
       setError("Erreur lors de la mise à jour de l'agent. Veuillez réessayer.");
     });
     return;
@@ -126,13 +134,12 @@ const handleSaveService = async (e) => {
   else {
     api.post(`${API_URL}/user/create`, newAgent)
       .then((response) => {
-        console.log("Agent créé avec succès :", response.data);
+        setMsg("Agent créé avec succès.");
         getAgents();
         setEditData(null);
         setShowAddAgentModal(false);
       })
       .catch((error) => {
-        console.error("Erreur lors de la création de l'agent :", error);
         setError("Erreur lors de la création de l'agent. Veuillez réessayer.");
       });
     };
@@ -142,11 +149,10 @@ const handleSaveService = async (e) => {
   const setAdminUser = (id) => {
     api.put(`${API_URL}/user/${id}`, { role: "admin" })
       .then((response) => {
-        console.log("Rôle d'admin attribué avec succès :", response.data);
+        setMsg("Rôle d'admin attribué avec succès.");
         getAgents();
       })
       .catch((error) => {
-        console.error("Erreur lors de l'attribution du rôle d'admin :", error);
         setError("Erreur lors de l'attribution du rôle d'admin. Veuillez réessayer.");
       });
   }
@@ -155,11 +161,10 @@ const handleSaveService = async (e) => {
  const handleDeleteAgent = (id) => {
   api.delete(`${API_URL}/user/${id}`)
     .then((response) => {
+      setMsg("Agent supprimé avec succès.");
       getAgents();
-      console.log("Agent supprimé avec succès :", response.data);
     })
     .catch((error) => {
-      console.error("Erreur lors de la suppression de l'agent :", error);
       setError("Erreur lors de la suppression de l'agent. Veuillez réessayer.");
     }); 
  };
@@ -214,14 +219,13 @@ const handleSaveService = async (e) => {
     </ul>
 
     <button
-     className="mt-12 flex items-center gap-2 text-red-600 hover:text-red-700 font-semibold"
-    >
-     <LogOut
       onClick={()=> {
         logout();
-        Navigate('/login');
+        navigate('/login');
       }}
-      className="h-5 w-5"
+     className="mt-12 flex items-center gap-2 text-red-600 hover:text-red-700 font-semibold"
+    >
+     <LogOut className="h-5 w-5"
       /> Déconnexion
     </button>
    </aside>
@@ -330,7 +334,7 @@ const handleSaveService = async (e) => {
              onClick={() => { setEditData(a); setShowAddAgentModal(true);  setIsEdit(true) }} />
             <Trash2 className="text-red-600 cursor-pointer"
              onClick={() => handleDeleteAgent(a.id)} />
-            <CrownIcon lassName="text-blue-600 cursor-pointer"
+            <CrownIcon className="text-blue-600 cursor-pointer"
             onClick={() => { setAdminUser(a.id) }} />
            </td>
           </tr>

@@ -7,6 +7,7 @@ export const AppProvider = ({ children }) => {
   const API_URL = "http://localhost:5000/api"
   const DIR_URL = "http://localhost:5000"
   const [user, setUser] = useState(null)
+  const [msg, setMsg] = useState(null)
   const [error, setError] = useState(null)
   const [agents, setAgents] = useState([])
 
@@ -21,6 +22,7 @@ export const AppProvider = ({ children }) => {
     <AppContext.Provider value={{ 
         user, setUser,
         error, setError,
+        msg, setMsg,
         API_URL, DIR_URL,
         agents,setAgents 
          }}>
