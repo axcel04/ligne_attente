@@ -18,12 +18,15 @@ export default function AdminDashboard() {
 
  // load from localStorage if present, otherwise default
  const [services, setServices] = useState([]);
- useEffect(()=> {
+ const getServices = () => {
   api.get(`${API_URL}/service`)
     .then(resp => {
       setServices(resp.data)
     })
     .catch(err => console.log(err.message))
+ }
+ useEffect(()=> {
+  getServices();
  },[])
 
  const getAgents = async () => {
@@ -43,69 +46,43 @@ export default function AdminDashboard() {
  ]);
 
 
- // Ajouter/Modifier Service
- const handleSaveService = async (e) => {
+// Ajouter/Modifier Service
+const handleSaveService = async (e) => {
   e.preventDefault();
   const f = new FormData(e.target);
 
-  // Build FormData for multipart upload
+  // Build FormData
   const formData = new FormData();
   formData.append("name", f.get("name"));
   formData.append("description", f.get("description"));
 
-  // file (may be null)
   const file = f.get("image");
   if (file && file.size && file.name) {
-   formData.append("image", file);
+    formData.append("image", file);
   }
 
-  // optimistic id for local use
-  const generatedId = editData ? editData.id : Date.now();
-
-  // Try to send to backend
   try {
-   const res = await api.post(`${API_URL}/service`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-   });
+    if (isEdit) {
+      await api.put(`${API_URL}/service/${editData.id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } else {
+      await api.post(`${API_URL}/service`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    }
 
-   // Expect backend to return created service (containing image path like 'uploads/filename')
-   const created = res.data;
-   console.log("Created service from backend:", created);
-   // Build accessible image URL if backend returns image path
-   const imageUrl = created.image
-    ? (API_URL ? `${API_URL.replace(/\/$/, "")}/${created.image}` : `/${created.image}`)
-    : null;
+    await getServices();
 
-   const newService = {
-    id: created.id || generatedId,
-    name: created.name,
-    description: created.description,
-    image: imageUrl || null,
-   };
-
-   setServices((prev) =>
-    editData ? prev.map((s) => (s.id === editData.id ? newService : s)) : [newService, ...prev]
-   );
   } catch (err) {
-   // If backend fails (dev mode / offline), fallback to local-only behavior
-   console.error("Upload failed, saving locally instead:", err?.message || err);
-
-   const localImageUrl = file && file.size ? URL.createObjectURL(file) : editData?.image || null;
-   const newService = {
-    id: editData ? editData.id : generatedId,
-    name: f.get("name"),
-    description: f.get("description"),
-    image: localImageUrl,
-   };
-
-   setServices((prev) =>
-    editData ? prev.map((s) => (s.id === editData.id ? newService : s)) : [newService, ...prev]
-   );
+    console.error("Save service failed:", err);
   } finally {
-   setEditData(null);
-   setShowAddServiceModal(false);
+    setEditData(null);
+    setIsEdit(false);
+    setShowAddServiceModal(false);
   }
- };
+};
+
 
  const handleDeleteService = (id) => {
   setServices((prev) => prev.filter((s) => s.id !== id));
@@ -124,7 +101,7 @@ export default function AdminDashboard() {
    role: "agent",
    password: "123456", // default password
   };
-  console.log("Saving agent:", newAgent, isEdit);
+
   if(isEdit){
     api.put(`${API_URL}/user/${editData.id}`, newAgent)
     .then((response) => {
@@ -252,7 +229,7 @@ export default function AdminDashboard() {
          <Plus /> Ajouter
         </button>
        </div>
-
+update agent works fine
        {/* TABLE PC */}
        <table className="hidden md:table w-full mt-4">
         <thead>
