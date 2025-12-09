@@ -40,7 +40,6 @@ export default function AgentDashboard() {
     api.get(`${API_URL}/ticket/service/${activeService.id}`)
       .then(res => setTickets(res.data))
       .catch(err => console.error("Erreur tickets:", err));
-
   }, [activeService]);
 
   // Mobile screen detection
@@ -185,19 +184,19 @@ export default function AgentDashboard() {
                   icon: Users,
                   color: "text-blue-600",
                   label: "En attente",
-                  value: tickets.filter(t => t.status === "waiting").length,
+                  value: tickets.filter(t => t.status === "en_attente").length,
                 },
                 {
                   icon: Ticket,
                   color: "text-green-600",
                   label: "Appelé",
-                  value: tickets.filter(t => t.status === "called").length,
+                  value: tickets.filter(t => t.status === "appel").length,
                 },
                 {
                   icon: CheckCircle2,
                   color: "text-purple-600",
                   label: "Servi",
-                  value: tickets.filter(t => t.status === "served").length,
+                  value: tickets.filter(t => t.status === "servi").length,
                 },
                 {
                   icon: Activity,

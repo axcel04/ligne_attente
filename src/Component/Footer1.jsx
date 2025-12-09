@@ -16,7 +16,7 @@ export default function Footer1() {
         </button>
 
         {/* Home */}
-        <button onClick={()=>navigate("/home")} className="flex flex-col items-center text-gray-700 hover:text-blue-600">
+        <button onClick={()=>navigate("/")} className="flex flex-col items-center text-gray-700 hover:text-blue-600">
           <HomeIcon className="w-6 h-6" />
           <span className="text-xs mt-1">Home</span>
         </button>
