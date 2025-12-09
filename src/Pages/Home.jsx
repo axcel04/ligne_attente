@@ -5,16 +5,25 @@ import Footer1 from "../Component/Footer1";
 import { Bell } from "lucide-react";
 import { useApi } from "../api";
 import { useAppContext } from "../context/AppContext";
+import { showToast } from "../utils/showToast";
 
 export default function Home() {
-  const { API_URL } = useAppContext();
+  const { API_URL, error, msg, setError, setMsg } = useAppContext();
   const api = useApi()
   const [ticket, setTicket] = useState({});
-
   const [notify, setNotify] = useState(false);
   const [position, setPosition] = useState(null);
 
-  useEffect(() => {
+   useEffect(() => {
+    if (msg) {
+      showToast(msg, "success");
+    }
+    if (error) {
+      showToast(error, "error");
+    }
+  }, [msg, error]);
+
+  const getTicket = () => {
     api.get(`${API_URL}/ticket`)
       .then((response) => {
         // get latest 
@@ -34,7 +43,21 @@ export default function Home() {
       .catch((error) => {
         console.error("Erreur lors de la récupération du ticket :", error);
       });
+  }
+  useEffect(() => {
+    getTicket()
   },[])
+
+  const cancelTicket = () => {
+    api.put(`${API_URL}/ticket/${ticket.id}/status`, { status: 'annulee' })
+      .then((response) => {
+        setMsg("Ticket annulé avec succès !");
+        getTicket()
+      })
+      .catch((error) => {
+        setError("Échec de l'annulation du ticket. Veuillez réessayer.");
+      });
+  }
 
   return (
     <>
@@ -71,7 +94,7 @@ export default function Home() {
                 <Bell />🔔 Vous allez être appelé bientôt !
               </div>
             )}
-            <div onClick={()=> setTicket("")} className="absolute bottom-4 right-2 px-2 text-red-500 bg-red-100 rounded-full">
+            <div onClick={cancelTicket} className="absolute bottom-4 right-2 px-2 text-red-500 bg-red-100 rounded-full">
                <bouton>Annulé</bouton>
             </div>
           </div>
