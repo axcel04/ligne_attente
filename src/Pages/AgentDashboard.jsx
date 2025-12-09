@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {Users, Ticket, CheckCircle2, Activity, Search, LogOut,ArrowRightCircle, Bell, Menu, X, Home } from "lucide-react";
+import {
+  Users, Ticket, CheckCircle2, Activity, Search, LogOut,
+  ArrowRightCircle, Bell, Menu, X, Home
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useApi } from '../api';
 import { useAuth } from "../context/AuthContext";
@@ -8,9 +11,8 @@ import ArchiveAgent from "./ArchiveAgent";
 
 export default function AgentDashboard() {
   const api = useApi();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { API_URL } = useAppContext();
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [isMobile, setIsMobile] = useState(false);
@@ -23,17 +25,17 @@ export default function AgentDashboard() {
   const [tickets, setTickets] = useState([]);
   const [search, setSearch] = useState("");
 
-  // Fetch services on mount
+  // FETCH SERVICES
   useEffect(() => {
     api.get(`${API_URL}/service`)
       .then(res => {
         setServices(res.data);
-        setActiveService(res.data[0]); // auto-select first service
+        setActiveService(res.data[0]);
       })
       .catch(err => console.error("Erreur services:", err));
   }, []);
 
-  // Fetch tickets when activeService changes
+  // FETCH TICKETS OF ACTIVE SERVICE
   useEffect(() => {
     if (!activeService?.id) return;
 
@@ -42,7 +44,7 @@ export default function AgentDashboard() {
       .catch(err => console.error("Erreur tickets:", err));
   }, [activeService]);
 
-  // Mobile screen detection
+  // MOBILE SCREEN DETECTION
   useEffect(() => {
     const check = () => {
       setIsMobile(window.innerWidth < 768);
@@ -58,28 +60,33 @@ export default function AgentDashboard() {
     navigate("/login");
   };
 
+  // CALL NEXT PATIENT
   const handleCall = () => {
-    const next = tickets.find(t => t.status === "waiting");
+    const next = tickets.find(t => t.status === "en_attente");
     if (!next) return alert("Aucun patient en attente.");
 
-    api.put(`${API_URL}/ticket/${next.id}/status`, { status: "called" })
+    api.put(`${API_URL}/ticket/${next.id}/status`, { status: "appel" })
       .then(() => {
         setTickets(prev =>
-          prev.map(t => t.id === next.id ? { ...t, status: "called" } : t)
+          prev.map(t => t.id === next.id ? { ...t, status: "appel" } : t)
         );
       });
   };
 
+  // MARK SERVED
   const handleServed = (id) => {
-    api.put(`${API_URL}/ticket/${id}/status`, { status: "served" })
+    api.put(`${API_URL}/ticket/${id}/status`, { status: "servi" })
       .then(() => {
         setTickets(prev =>
-          prev.map(t => t.id === id ? { ...t, status: "served" } : t)
+          prev.map(t => t.id === id ? { ...t, status: "servi" } : t)
         );
       });
   };
 
-  const nextTicket = tickets.find(t => t.status === "waiting");
+  // FILTER ONLY en_attente FOR WAITING LIST
+  const waitingList = tickets.filter(t => t.status === "en_attente");
+
+  const nextTicket = waitingList[0];
 
   const handleServiceChange = (service) => {
     setAgentMode(false);
@@ -98,11 +105,10 @@ export default function AgentDashboard() {
               {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           )}
+
           <img src="/logo-hopt.png" alt="Logo" className="h-10 w-10" />
           <div className="flex flex-col">
-            <h1 className="text-lg font-bold text-gray-800">
-              Tableau de bord
-            </h1>
+            <h1 className="text-lg font-bold text-gray-800">Tableau de bord</h1>
             <span className="text-blue-600 font-semibold text-sm">
               {activeService?.name || "Sélectionner un service"}
             </span>
@@ -114,17 +120,17 @@ export default function AgentDashboard() {
             <Home className="h-5 w-5" />
           </button>
 
-          {/* Bell notification */}
+          {/* Notifications */}
           <button className="relative p-2">
             <Bell className="h-5 w-5 text-gray-600" />
             <span className="absolute top-1 right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
-              {tickets.filter(t => t.status === "waiting").length}
+              {waitingList.length}
             </span>
           </button>
         </div>
       </header>
 
-      {/* Mobile overlay */}
+      {/* MOBILE OVERLAY */}
       {isMobile && sidebarOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setSidebarOpen(false)} />
       )}
@@ -139,6 +145,7 @@ export default function AgentDashboard() {
         `}
       >
         <h2 className="text-lg font-bold mb-6 px-2">Services</h2>
+
         <ul className="space-y-1">
           {services.map(s => (
             <li key={s.id}>
@@ -184,7 +191,7 @@ export default function AgentDashboard() {
                   icon: Users,
                   color: "text-blue-600",
                   label: "En attente",
-                  value: tickets.filter(t => t.status === "en_attente").length,
+                  value: waitingList.length,
                 },
                 {
                   icon: Ticket,
@@ -227,15 +234,16 @@ export default function AgentDashboard() {
               />
             </div>
 
-            {/* NEXT PATIENT */}
+            {/* NEXT PATIENT CARD */}
             {nextTicket && (
               <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white mt-6 p-4 rounded-xl shadow flex flex-col md:flex-row md:items-center justify-between">
                 <div className="flex-1">
                   <h3 className="text-lg font-bold">Prochain patient</h3>
                   <p className="text-base md:text-lg mt-1">
-                    {nextTicket.number} — {nextTicket.fullName}
+                    {nextTicket.fullName}
                   </p>
                 </div>
+
                 <button
                   onClick={handleCall}
                   className="bg-white text-blue-700 px-4 py-3 rounded-xl font-semibold shadow hover:bg-blue-50 w-full md:w-auto"
@@ -250,11 +258,11 @@ export default function AgentDashboard() {
             <section className="mt-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-800">Liste d'attente</h2>
-                <span className="text-sm text-gray-500">{tickets.length} patient(s)</span>
+                <span className="text-sm text-gray-500">{waitingList.length} patient(s)</span>
               </div>
 
               <div className="space-y-3">
-                {tickets
+                {waitingList
                   .filter(t =>
                     t.fullName.toLowerCase().includes(search.toLowerCase())
                   )
@@ -262,37 +270,24 @@ export default function AgentDashboard() {
                     <div key={t.id} className="bg-white p-4 rounded-xl shadow flex flex-col sm:flex-row justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-lg">
-                          {t.number || t.id}
+                          {t.id}
                         </div>
                         <p className="font-medium text-gray-700">{t.fullName}</p>
                       </div>
 
                       <div className="flex justify-end">
-                        {t.status === "waiting" && (
-                          <span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                            En attente
-                          </span>
-                        )}
-
-                        {t.status === "called" && (
-                          <button
-                            onClick={() => handleServed(t.id)}
-                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-semibold text-sm"
-                          >
-                            Marquer Servi
-                          </button>
-                        )}
-
-                        {t.status === "served" && (
-                          <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 flex items-center">
-                            <CheckCircle2 className="h-4 w-4 mr-1" /> Servi
-                          </span>
-                        )}
+                        {/* RESTORED CALL BUTTON INSIDE WAITING LIST ITEM */}
+                        <button
+                          onClick={() => handleCall(t.id)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold text-sm"
+                        >
+                          Appeler
+                        </button>
                       </div>
                     </div>
                   ))}
 
-                {tickets.length === 0 && (
+                {waitingList.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
                     Aucun patient en attente pour ce service
                   </div>
@@ -300,7 +295,7 @@ export default function AgentDashboard() {
               </div>
             </section>
 
-            {/* Floating button */}
+            {/* FLOATING ACTION BUTTON (FAB) — MOBILE */}
             {nextTicket && isMobile && (
               <button
                 onClick={handleCall}
