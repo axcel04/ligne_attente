@@ -8,7 +8,7 @@ import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2
 
 
 export default function AdminDashboard() {
- const { API_URL, DIR_URL } = useAppContext();
+ const { API_URL, DIR_URL, error, setError } = useAppContext();
  const { logout } = useAuth();
  const [activeSection, setActiveSection] = useState("Services");
  const [showSidebar, setShowSidebar] = useState(false);
@@ -136,16 +136,23 @@ export default function AdminDashboard() {
 
   const newAgent = {
    id: editData ? editData.id : Date.now(),
-   name: f.get("name"),
+   fullName: f.get("name"),
    email: f.get("email"),
    service: f.get("service"),
+   role: "agent",
+   password: "123456", // default password
   };
-  console.log(newAgent);return
-  if (editData) setAgents((prev) => prev.map((a) => (a.id === editData.id ? newAgent : a)));
-  else setAgents((prev) => [newAgent, ...prev]);
-
-  setEditData(null);
-  setShowAddAgentModal(false);
+  console.log("Creating agent:", newAgent);
+  axios.post(`${API_URL}/user/create`, newAgent)
+    .then((response) => {
+      console.log("Agent créé avec succès :", response.data);
+      setEditData(null);
+      setShowAddAgentModal(false);
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la création de l'agent :", error);
+      setError("Erreur lors de la création de l'agent. Veuillez réessayer.");
+    });
  };
 
  const handleDeleteAgent = (id) => {
