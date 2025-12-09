@@ -1,50 +1,46 @@
-import React, { useState } from "react";
-import { X, User, Phone, MapPin, Briefcase, VenetianMask } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useAppContext } from "../context/AppContext";
+import { useApi } from "../api";
+import { useAuth } from "../context/AuthContext";
+import { showToast } from "../utils/showToast";
+import { X, User, Phone, MapPin } from "lucide-react";
 
 export default function ModalTicket({ show, onClose, service }) {
+  const api = useApi();
+  const { user } = useAuth()
+  const { API_URL, msg, error, setError, setMsg } = useAppContext();
   const [form, setForm] = useState({
-    name: "",
+    fullName: "",
     contact: "",
     address: "",
+    serviceId: service.id,
+    userId: user.id
   });
 
   if (!show) return null;
 
-  // 🔥 Génère un numéro de ticket unique : EX -> LAB-001
-  const generateTicketNumber = () => {
-    const key = `tickets-${service.id}`;
+  useEffect(() => {
+    if (msg) {
+      showToast(msg, "success");
+    }
+    if (error) {
+      showToast(error, "error");
+    }
+  }, [msg, error]);
 
-    const existing = JSON.parse(localStorage.getItem(key)) || [];
-    const nextNumber = existing.length + 1;
-
-    return `${service.shortCode}-${String(nextNumber).padStart(3, "0")}`;
-  };
-
-  // 🔥 Sauvegarde dans localStorage
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const ticketNumber = generateTicketNumber();
-
-    const ticket = {
-      id: Date.now(),
-      service: service.name,
-      serviceId: service.id,
-      number: ticketNumber,
-      ...form,
-      date: new Date().toISOString().slice(0, 10),
-    };
-
-    const key = `tickets-${service.id}`;
-    const existing = JSON.parse(localStorage.getItem(key)) || [];
-    existing.push(ticket);
-    localStorage.setItem(key, JSON.stringify(existing));
-
-    alert(`Ticket généré : ${ticketNumber}`);
-
-    // Reset + fermeture
-    setForm({ name: "", contact: "", sexe: "", fonction: "", address: "" });
-    onClose();
+    api.post(`${API_URL}/ticket`,form)
+      .then((response) => {
+        setMsg("Ticket généré avec succès !");
+        setForm({ name: "", contact: "", sexe: "", fonction: "", address: "" });
+        onClose();
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la création du ticket :", error);
+        setError("Échec de la génération du ticket. Veuillez réessayer.");
+      }); 
   };
 
   const handleChange = (field, value) => {
@@ -78,8 +74,8 @@ export default function ModalTicket({ show, onClose, service }) {
             <input
               type="text"
               placeholder="Nom complet"
-              value={form.name}
-              onChange={(e) => handleChange("name", e.target.value)}
+              value={form.fullName}
+              onChange={(e) => handleChange("fullName", e.target.value)}
               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none"
               required
             />
