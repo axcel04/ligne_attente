@@ -1,27 +1,31 @@
-# Frontent documentation
+# Documentation : Gestion des Utilisateurs
 
-## Features
-1. Authentication
-2. Home - client page
-3. Agent page
-4. Admin page
+Cette section détaille les procédures administratives pour la création et la gestion des comptes au sein de l'application.
 
-With role management
+## Création de Comptes Agents
 
-## Requirements
+L'administrateur système possède les privilèges nécessaires pour étendre l'équipe via son interface dédiée.
 
-Having nodejs installed and npm
+### Procédure via le Tableau de Bord
+1. Connectez-vous avec un compte disposant du rôle `admin`.
+2. Accédez à la section **Tableau de Bord** (Dashboard).
+3. Utilisez le formulaire de création d'agent pour enregistrer un nouveau membre.
+4. Utilisez le formulaire de création de service pour enregistrer un nouveau service.
+5. Administrateur peut creer un nouveau administrateur en cliquant sur la troisieme icone dans la colonne de statut de table des agents **NB: On cree le ne nouveau administrateur qui devient agent**
 
-## Setup
-1. Run the command `cd ligne_attente` pour entrer dans le repertoire du projet frontend
-2. Run the command `npm install`
-This command installs the requirements in [package.json](pockage.json)
-3. Run the command `npm run dev -- --host` pour demarrer le projet. Ceci permet d'exposer l'addresse du routeur pour pouvoir tester en local sur plusieurs appareils
+### Identifiants par Défaut
+Lorsqu'un compte agent est créé manuellement par l'administrateur, les paramètres de connexion initiaux sont les suivants :
 
-## Admin use creation
+- Identifiant : L'adresse email renseignée lors de la création.
+- Mot de passe par défaut : `12345`
 
-When a user registers, by default it's a normal user. To set him an admin, go in the MYSQL and do 
-`ALTER TABLE user SET role = 'admin' WHERE id = userId`. 
 
-Admin user shall be able to create agents from his dashboard. 
-The default password for an agent is (12345)
+## Attribution du Rôle Administrateur (MySQL)
+
+Par défaut, tout utilisateur qui s'enregistre via le formulaire d'inscription standard reçoit le rôle de client. Pour promouvoir un utilisateur au rang d'administrateur, une intervention manuelle dans la base de données MySQL est requise :
+
+```sql
+UPDATE user SET role = 'admin' WHERE id = userId;\
+```
+
+Remplacez userId par l'identifiant numérique de l'utilisateur concerné.
