@@ -1,9 +1,11 @@
 // create a globalContext for the app
 import { createContext, useState, useContext } from 'react'
+import { io } from 'socket.io-client'
 
 export const AppContext = createContext()
 
 export const AppProvider = ({ children }) => {
+  const socket = io('http://10.159.243.18:4000')
   const API_URL = "http://10.159.243.18:4000/api"
   const DIR_URL = "http://localhost:4000"
   const [user, setUser] = useState(null)
@@ -24,7 +26,8 @@ export const AppProvider = ({ children }) => {
         error, setError,
         msg, setMsg,
         API_URL, DIR_URL,
-        agents,setAgents 
+        agents,setAgents,
+        socket
          }}>
       {children}
     </AppContext.Provider>

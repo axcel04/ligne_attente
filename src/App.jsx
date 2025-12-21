@@ -19,12 +19,10 @@ import { useAppContext } from "./context/AppContext";
 import { showToast } from "./utils/showToast";
 
 // register socket.io
-import { io } from 'socket.io-client'
-const socket = io('http://10.159.243.18:4000')
 
 export default function App() {
   const { user } = useAuth();
-  const { error, msg, setMsg } = useAppContext(); 
+  const { error, msg, setMsg, socket } = useAppContext(); 
     useEffect(() => {
       if (msg) {
         showToast(msg, "success");
@@ -34,15 +32,20 @@ export default function App() {
       }
     }, [msg, error]);
 
-  useEffect(() => {
-  socket.emit('joinRoom', `ticket_${user.id}`)
+    useEffect(() => {
+      if (!user) return; // wait until user is defined
 
-  socket.on('notification', (data) => {
-    setMsg(data.message)
-  })
+      socket.emit('joinRoom', `user_${user.id}`)
 
-  return () => socket.disconnect()
-}, [])
+      socket.on('notification', (data) => {
+        console.log('Notification:', data)
+        setMsg(data.message)
+      })
+
+      return () => socket.off('notification') // cleanup
+    }, [user])
+
+
   return (<>
     <div id="toast-root" className="fixed top-5 right-5 z-[9999] space-y-3"></div>
     <BrowserRouter>

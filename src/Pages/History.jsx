@@ -13,13 +13,14 @@ export default function History() {
 
   useEffect(() => {
     api
-      .get(`${API_URL}/ticket`)
+      .get(`${API_URL}/ticket/me/queue`)
       .then((response) => {
         // map tickets to desired format 
         console.log(response.data);
         const mappedTickets = response.data.map((t) => ({
           id: t.id,
           service: t.Service.name,
+          name: t.fullName,
           date: new Date(t.created_at).toLocaleString(),
           position: `A0${t.id}` || null,
           status: t.status,
@@ -74,25 +75,27 @@ export default function History() {
             <tr className="bg-gray-100 text-left">
               <th className="p-2">Ticket</th>
               <th className="p-2">Service</th>
+              <th className="p-2">Nom</th>
               <th className="p-2">Date</th>
               <th className="p-2">Position</th>
               <th className="p-2">Statut</th>
             </tr>
           </thead>
           <tbody>
-            {tickets.map((t) => (
-              <tr key={t.id} className="border-b">
-                <td className="p-2 font-bold">{t.id}</td>
-                <td className="p-2">{t.service}</td>
-                <td className="p-2">{t.date}</td>
-                <td className="p-2">{t.position || "-"}</td>
+            {tickets.map((ticket) => (
+              <tr key={ticket.id} className="border-b">
+                <td className="p-2 font-bold">{ticket.id}</td>
+                <td className="p-2">{ticket.service}</td>
+                <td className="p-2">{ticket.name || "Utilisateur"}</td>
+                <td className="p-2">{ticket.date}</td>
+                <td className="p-2">{ticket.position || "-"}</td>
                 <td className="p-2">
                   <span
                     className={`px-3 py-1 rounded-full text-sm ${getStatusStyle(
-                      t.status
+                      ticket.status
                     )}`}
                   >
-                    {getStatusLabel(t.status)}
+                    {getStatusLabel(ticket.status)}
                   </span>
                 </td>
               </tr>

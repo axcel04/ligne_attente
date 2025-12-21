@@ -63,7 +63,7 @@ export default function Home() {
       <div className="min-h-screen bg-gray-100 pb-24">
         <div className="max-w-5xl mx-auto px-4 py-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-            🎫 File d’attente – Tickets en cours
+            File d’attente – Tickets en cours
           </h1>
 
           {tickets.length === 0 ? (
@@ -89,6 +89,13 @@ export default function Home() {
                       Position :{" "}
                       <span className="font-semibold text-gray-700">
                         {ticket.position}
+                      </span>
+                    </p>
+                    {/* display name  fullName*/}
+                    <p className="text-sm text-gray-500">
+                      Nom :{" "}
+                      <span className="font-semibold text-gray-700">
+                        {ticket.fullName || "—"}
                       </span>
                     </p>
                   </div>

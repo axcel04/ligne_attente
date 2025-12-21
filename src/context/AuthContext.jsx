@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   const [user, setUser] = useState(null)
-  const [token, setToken] = useState(localStorage.getItem("token") || null)
+  const [token, setToken] = useState(sessionStorage.getItem("token") || null)
 
   // fetch user profile when token changes
   useEffect(() => {
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       console.error(err?.response?.data || err.message )
       setUser(null)
       setToken(null)
-      localStorage.removeItem("token")
+      sessionStorage.removeItem("token")
     })
     .finally(() => {
       setLoading(false)
@@ -46,14 +46,14 @@ export const AuthProvider = ({ children }) => {
     }
 
     setToken(data.token)
-    localStorage.setItem("token", data.token)
+    sessionStorage.setItem("token", data.token)
     setUser(data.user)
   }
 
   const logout = () => {
     setUser(null)
     setToken(null)
-    localStorage.removeItem("token")
+    sessionStorage.removeItem("token")
   }
 
   return (
