@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
     if (data.error) {
       throw new Error(data.error)
     }
-
+console.log(data);
     setToken(data.token)
     sessionStorage.setItem("token", data.token)
     setUser(data.user)

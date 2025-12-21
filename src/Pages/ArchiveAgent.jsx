@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { Users, Search, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../api";
@@ -30,7 +30,6 @@ export default function ArchiveAgent() {
   // Fetch all tickets for selected service
   useEffect(() => {
     if (!activeService?.id) return;
-
     api.get(`${API_URL}/ticket/service/${activeService.id}`)
       .then(res => setTickets(res.data))
       .catch(err => console.error("Erreur tickets:", err));

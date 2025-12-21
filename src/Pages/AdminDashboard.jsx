@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useApi } from "../api"
 import { showToast } from "../utils/showToast";
 import {useAppContext} from "../context/AppContext";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import { Users, ListOrdered, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu, CrownIcon,} from "lucide-react";
@@ -50,11 +50,16 @@ export default function AdminDashboard() {
   }
  };
 
- const [patients] = useState([
-  { id: 1, name: "Patient Alpha", service: "Radiologie" },
-  { id: 2, name: "Patient Bravo", service: "Radiologie" },
-  { id: 3, name: "Patient Charlie", service: "Laboratoire" },
- ]);
+const [patients, setPatients] = useState([]);
+useEffect(() => {
+  api.get(`${API_URL}/ticket`)
+    .then((response) => {
+      setPatients(response.data);
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la récupération des patients :", error);
+    });
+}, []); 
 
 
 // Ajouter/Modifier Service
@@ -173,7 +178,7 @@ const handleSaveService = async (e) => {
 
  const patientsByService = services.map((s) => ({
   service: s.name,
-  count: patients.filter((p) => p.service === s.name).length,
+  count: patients.filter((p) => p.Service.name === s.name).length,
  }));
 
  return (
@@ -202,7 +207,6 @@ const handleSaveService = async (e) => {
      {[{ label: "Services", icon: Settings },
       { label: "Agents", icon: Users, action: getAgents },
       { label: "Rapports", icon: LineChart },
-      { label: "Archives", icon: Archive },
      ].map((item) => (
       <li
        key={item.label}
