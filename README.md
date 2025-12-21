@@ -1,16 +1,27 @@
-# React + Vite
+# Frontent documentation
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Features
+1. Authentication
+2. Home - client page
+3. Agent page
+4. Admin page
 
-Currently, two official plugins are available:
+With role management
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Requirements
 
-## React Compiler
+Having nodejs installed and npm
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Setup
+1. Run the command `cd ligne_attente` pour entrer dans le repertoire du projet frontend
+2. Run the command `npm install`
+This command installs the requirements in [package.json](pockage.json)
+3. Run the command `npm run dev -- --host` pour demarrer le projet. Ceci permet d'exposer l'addresse du routeur pour pouvoir tester en local sur plusieurs appareils
 
-## Expanding the ESLint configuration
+## Admin use creation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+When a user registers, by default it's a normal user. To set him an admin, go in the MYSQL and do 
+`ALTER TABLE user SET role = 'admin' WHERE id = userId`. 
+
+Admin user shall be able to create agents from his dashboard. 
+The default password for an agent is (12345)
