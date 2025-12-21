@@ -59,6 +59,7 @@ export default function AgentDashboard() {
     logout();
     navigate("/login");
   };
+  
 
   // CALL NEXT PATIENT
   const handleCall = () => {

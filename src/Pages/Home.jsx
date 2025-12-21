@@ -50,9 +50,11 @@ export default function Home() {
 
   const cancelTicket = () => {
     api.put(`${API_URL}/ticket/${ticket.id}/status`, { status: 'annulee' })
+    // api.delete(`${API_URL}/ticket/${ticket.id}/status`, { status: 'annulee' })
       .then((response) => {
         setMsg("Ticket annulé avec succès !");
         getTicket()
+
       })
       .catch((error) => {
         setError("Échec de l'annulation du ticket. Veuillez réessayer.");

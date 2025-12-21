@@ -3,6 +3,7 @@ import { AtSign, Lock, Shield, UserCheck, UserCog } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
+import { Users, ListOrdered } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function Login() {
         navigate("/");
       })
       .catch((err) => {
-        console.error("Erreur lors de la connexion :", err?.response?.data || err.message);
+        console.error("Erreur lors de la connexion :", err);
         setError("Email ou mot de passe incorrect.");
       });
   };
@@ -41,11 +42,10 @@ export default function Login() {
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 mx-auto mt-4 mb-10">
         {/* Logo & Title */}
         <div className="text-center mb-8">
-          <img
-            src="/logo-hopt.png"
-            alt="Logo"
-            className="w-20 mx-auto mb-2"
-          />
+          <div className="flex items-center gap-1 mx-auto w-20 text-white border-2 border-yellow-300 bg-blue-600 p-2 rounded-full ">
+            <Users className="h-6 w-6" />
+            <ListOrdered className="h-6 w-6" />
+          </div>
           <h1 className="text-2xl font-bold text-gray-800">Connexion</h1>
           <p className="text-gray-500 text-sm">
             Accédez au système de file d’attente de l'Hôpital
@@ -80,12 +80,12 @@ export default function Login() {
             />
           </div>
 
-        {/* show error message */}
-        {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded-lg text-center">
-            {error}
-          </div>
-        )} 
+          {/* show error message */}
+          {error && (
+            <div className="bg-red-100 text-red-700 p-3 rounded-lg text-center">
+              {error}
+            </div>
+          )} 
 
           {/* Submit */}
           <button

@@ -4,7 +4,8 @@ import { showToast } from "../utils/showToast";
 import {useAppContext} from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Users, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu, CrownIcon,} from "lucide-react";
+
+import { Users, ListOrdered, Settings, LineChart, Archive, LogOut, Plus, Bell, Pencil, Trash2, XCircle, Menu, CrownIcon,} from "lucide-react";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ export default function AdminDashboard() {
    const res = await api.get(`${API_URL}/user/agents`);
    setAgents(res.data);
   } catch (err) {
+    console.error(err);
     setError("Erreur lors de la récupération des agents. Veuillez réessayer.");
   }
  };
@@ -116,7 +118,7 @@ const handleSaveService = async (e) => {
    email: f.get("email"),
    serviceId: f.get("service"),
    role: "agent",
-   password: "123456", // default password
+   password: "12345", // default password
   };
   if(isEdit){
     api.put(`${API_URL}/user/${editData.id}`, newAgent)
@@ -234,6 +236,15 @@ const handleSaveService = async (e) => {
    <main className="flex-1 md:ml-64 p-6">
     {/* HEADER */}
     <header className="fixed top-0 left-0 md:left-64 right-0 h-16 bg-white shadow-md px-6 flex items-center justify-between z-30">
+      <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-1 text-white border-2 border-yellow-300 bg-blue-600 p-2 rounded-full">
+          <Users className="h-6 w-6" />
+          <ListOrdered className="h-6 w-6" />
+        </div>
+        <h1 className="text-2xl font-bold text-blue-700">
+          File d'attente (Hôpital)
+        </h1>
+      </div> 
      <h2 className="text-xl font-bold flex items-center gap-2">
       <Bell className="h-6 w-6 text-blue-600" />
       Dashboard — {activeSection}

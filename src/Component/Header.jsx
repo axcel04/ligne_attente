@@ -1,6 +1,7 @@
 import { Bell, LucideLogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { Users, ListOrdered } from "lucide-react";
 
 export default function Header() {
   const { logout } = useAuth();
@@ -9,13 +10,12 @@ export default function Header() {
     <header className="flex justify-between items-center px-6 py-4 shadow-md bg-white sticky top-0 z-50">
       {/* Logo et Nom */}
       <div className="flex items-center space-x-3">
-        <img
-          src="/assets/hopital_logo.png" // Remplace par ton logo
-          alt="Logo Hôpital"
-          className="w-12 h-12 object-contain"
-        />
+        <div className="flex items-center gap-1 text-white border-2 border-yellow-300 bg-blue-600 p-2 rounded-full">
+          <Users className="h-6 w-6" />
+          <ListOrdered className="h-6 w-6" />
+        </div>
         <h1 className="text-2xl font-bold text-blue-700">
-          Hôpital National de Bujumbura
+          File d'attente (Hôpital)
         </h1>
       </div>
 

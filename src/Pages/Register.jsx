@@ -3,6 +3,8 @@ import { AtSign, Lock, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {useAppContext} from "../context/AppContext";
 import axios from "axios";
+import { Users, ListOrdered } from "lucide-react";
+
 
 export default function Register() {
   const { API_URL, error, setError } = useAppContext();
@@ -41,17 +43,15 @@ export default function Register() {
       });
   };
 
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         {/* Logo & Title */}
         <div className="text-center mb-8">
-          <img
-            src="/logo-hopt.png"
-            alt="Hopital Logo"
-            className="w-20 mx-auto mb-2"
-          />
+          <div className="flex items-center gap-1 mx-auto w-20 text-white border-2 border-yellow-300 bg-blue-600 p-2 rounded-full">
+            <Users className="h-6 w-6" />
+            <ListOrdered className="h-6 w-6" />
+          </div>
           <h1 className="text-2xl font-bold text-gray-800">Créer un compte</h1>
           <p className="text-gray-500 text-sm">
             Inscrivez-vous pour accéder au système de file d'attente

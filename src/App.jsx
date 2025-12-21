@@ -1,6 +1,5 @@
+import { useEffect } from "react";
 import Header from "./Component/Header";
-// import Footer from "./Component/Footer";
-// import Footer1 from "./Component/Footer1";
 import Home from "./Pages/Home";
 import ServicesPage from "./Pages/ServicesPage";
 import Notifications from "./Pages/Notifications";
@@ -15,11 +14,35 @@ import ArchiveAgent from "./Pages/ArchiveAgent";
 import AdminDashboard from "./Pages/AdminDashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import Unauthorized from "./Component/UnAuthorized";
+import { useAuth } from "./context/AuthContext";
 import { useAppContext } from "./context/AppContext";
+import { showToast } from "./utils/showToast";
 
+// register socket.io
+import { io } from 'socket.io-client'
+const socket = io('http://10.159.243.18:4000')
 
 export default function App() {
-  const { error, msg } = useAppContext(); 
+  const { user } = useAuth();
+  const { error, msg, setMsg } = useAppContext(); 
+    useEffect(() => {
+      if (msg) {
+        showToast(msg, "success");
+      }
+      if (error) {
+        showToast(error, "error");
+      }
+    }, [msg, error]);
+
+  useEffect(() => {
+  socket.emit('joinRoom', `ticket_${user.id}`)
+
+  socket.on('notification', (data) => {
+    setMsg(data.message)
+  })
+
+  return () => socket.disconnect()
+}, [])
   return (<>
     <div id="toast-root" className="fixed top-5 right-5 z-[9999] space-y-3"></div>
     <BrowserRouter>
